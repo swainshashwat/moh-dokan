@@ -2,7 +2,7 @@
 
 <div class="text-center h1">Registration</div>
 <div class="container">
-    {% from "_formhelpers.html" import render_field %}
+    {% include '_messages.html' %} {% from "_formhelpers.html" import render_field %}
     <form method="post" , enctype="multipart/form-data">
         <div>
             {{ render_field(form.name, class="form-control") }} {{ render_field(form.username, class="form-control") }} {{ render_field(form.email, class="form-control") }} {{ render_field(form.password, class="form-control") }} {{ render_field(form.confirm, class="form-control")
