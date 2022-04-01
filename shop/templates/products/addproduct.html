@@ -12,7 +12,7 @@
         {{ render_field(form.discount, class="form-control", placeholder="Add product discount")}}
         {{ render_field(form.stock, class="form-control", placeholder="Add product stock")}}
         
-        <label for="brand"> Add a Brand</label>
+        <label for="brand"><b>Add a Brand</b></label>
         <select name="brand" id="brand" class='form-control' required>
           <option value="">Select a brand</option>
           {% for brand in brands %}
@@ -20,11 +20,19 @@
           {% endfor %}
         </select>
 
-        <label for="category"> Add a Category</label>
+        <label for="category"><b>Add a Category</b></label>
         <select name="category" id="category" class="form-control" required>
           <option value="">Select a category</option>
           {% for category in categories %}
             <option value="{{ category.id }}"> {{ category.name }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="dist"><b>Add a Distributor</b></label>
+        <select name="dist" id="dist" class="form-control" required>
+          <option value="">Select a distributor</option>
+          {% for dist in dists %}
+            <option value="{{ dist.id }}"> {{ dist.name }}</option>
           {% endfor %}
         </select>
 

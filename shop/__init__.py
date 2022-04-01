@@ -9,7 +9,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test0.db'
 app.config["SECRET_KEY"] = "secretkeylol"
 app.config["UPLOADED_PHOTOS_DEST"] = os.path.join(basedir, 'static/images')
 
@@ -22,3 +22,4 @@ bcrypt = Bcrypt(app)
 
 from shop.admin import routes
 from shop.products import routes
+from shop.carts import carts

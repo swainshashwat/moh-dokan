@@ -1,25 +1,41 @@
-{% extends 'layout.html' %} {% block content %}
+{% extends 'layout.html' %}
+{% block content %}
 
 <div class="container">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
       {% include "_messages.html" %}
+
       {% if updatebrand %}
-      <h1 class="text-center mt-5">Add a brand</h1>
-      <form action="" method="POST">
-        <input type="text" name="brand" class="form-control" value="{{updatebrand.name}}"/>
-        <input type="submit" value="Update brand" class="btn btn-info mt-2" />
-        <button type="button" class="btn btn-warning mt-2" onclick="window.history.back();">Cancel</button>
-    </form>
+      <h1 class="text-center mt-5">Update brand</h1>
+        <form action="" method="POST">
+          <input type="text" name="brand" class="form-control" value="{{updatebrand.name}}"/>
+          <input type="submit" value="Update brand" class="btn btn-info mt-2" />
+          <button type="button" class="btn btn-warning mt-2" onclick="window.history.back();">Cancel</button>
+        </form>
       
+      {% elif updatecat %}
+        <h1 class="text-center mt-5">Update category</h1>
+        <form action="" method="POST">
+          <input type="text" name="category" class="form-control" value="{{updatecat.name}}"/>
+          <input type="submit" value="Update category" class="btn btn-info mt-2" />
+          <button type="button" class="btn btn-warning mt-2" onclick="window.history.back();">Cancel</button>
+        </form>
       {% else %}
-      <h1 class="text-center mt-5">Add a category</h1>
-      <form action="" method="POST">
-        <input type="text" name="category" class="form-control" value="{{updatecat.name}}"/>
-        <input type="submit" value="Update category" class="btn btn-info mt-2" />
-        <button type="button" class="btn btn-warning mt-2" onclick="window.history.back();">Cancel</button>
-      </form>
+        <h1 class="text-center mt-5">Update Distributor</h1>
+        <form action="" method="POST">
+          <div class="mb-3">
+          Name: <input type="text" name="dist" class="form-control" value="{{updatedist.name}}" />
+          </div>
+          <div class="mb-3">
+          City: <input type="text" name="city" class="form-control" value="{{updatedist.city}}"/>
+          </div>
+          <div class="mb-3">
+          Phone no.: <input type="text" name="phno" class="form-control" value="{{updatedist.phone_number}}"/>
+          </div>
+          <input type="submit" value="Add Distributor" class="btn btn-info mt-2" />
+        </form>
       {% endif %}
     </div>
     <div class="col-md-3"></div>

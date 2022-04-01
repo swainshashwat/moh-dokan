@@ -1,21 +1,38 @@
-{% extends 'layout.html' %} {% block content %}
+{% extends 'layout.html' %} 
+
+{% block content %}
 
 <div class="container">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-      {% include "_messages.html" %} {% if brands %}
-      <h1 class="text-center mt-5">Add a brand</h1>
-      <form action="" method="POST">
-        <input type="text" name="brand" class="form-control" />
-        <input type="submit" value="Add brand" class="btn btn-info mt-2" />
-      </form>
+      {% include "_messages.html" %} 
+      {% if brands %}
+        <h1 class="text-center mt-5">Add a Brand</h1>
+        <form action="" method="POST">
+          <input type="text" name="brand" class="form-control" />
+          <input type="submit" value="Add brand" class="btn btn-info mt-2" />
+        </form>
+      {% elif categories %}
+        <h1 class="text-center mt-5">Add a Category</h1>
+        <form action="" method="POST">
+          <input type="text" name="category" class="form-control" />
+          <input type="submit" value="Add category" class="btn btn-info mt-2" />
+        </form>
       {% else %}
-      <h1 class="text-center mt-5">Add a category</h1>
-      <form action="" method="POST">
-        <input type="text" name="category" class="form-control" />
-        <input type="submit" value="Add category" class="btn btn-info mt-2" />
-      </form>
+        <h1 class="text-center mt-5">Add a Distributor</h1>
+        <form action="" method="POST">
+          <div class="mb-3">
+          Name: <input type="text" name="dist" class="form-control" />
+          </div>
+          <div class="mb-3">
+          City: <input type="text" name="city" class="form-control" />
+          </div>
+          <div class="mb-3">
+          Phone no.: <input type="text" name="phno" class="form-control" />
+          </div>
+          <input type="submit" value="Add Distributor" class="btn btn-info mt-2" />
+        </form>
       {% endif %}
     </div>
     <div class="col-md-3"></div>

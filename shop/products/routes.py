@@ -1,40 +1,62 @@
-from ast import excepthandler
-from dis import dis, disco
-from functools import reduce
-from turtle import update
-from unicodedata import category
 from flask import redirect, render_template, url_for, flash, request, session, current_app
-from matplotlib.pyplot import title
-from numpy import product
-from pandas import CategoricalIndex
-from torch import prod
 from shop import db, app, photos
-from .models import Brand, Category, Addproduct
+from .models import Brand, Category, Dist, Addproduct
 from .forms import Addproducts
 import secrets, os
+
+def brands():
+    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
+    return brands
+
+def categories():
+    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
+    return categories
+
+def dists():
+    dists = Dist.query.join(Addproduct, (Dist.id==Addproduct.dist_id)).all()
+    return dists
 
 @app.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
-    products = Addproduct.query.filter(Addproduct.stock>0).paginate(page=page, per_page=1)
-    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
-    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
+    products = Addproduct.query.filter(Addproduct.stock>0).order_by(Addproduct.id.desc()).paginate(page=page, per_page=6)
     return render_template('products/index.html',
-     products=products, brands=brands, categories=categories)
+     products=products, brands=brands(), categories=categories())
+
+@app.route('/product/<int:id>')
+def single_page(id):
+    product = Addproduct.query.get_or_404(id)
+    return render_template('products/single_page.html', product=product,
+     brands=brands(), categories=categories())
 
 @app.route('/brand/<int:id>')
 def get_brand(id):
-    brand = Addproduct.query.filter_by(brand_id=id)
-    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
-    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
-    return render_template('products/index.html', brand=brand, brands=brands, categories=categories)
+    page = request.args.get('page', 1, type=int)
+    get_b = Brand.query.filter_by(id=id).first_or_404()
+    brand = Addproduct.query.filter_by(brand_id=id).paginate(page=page, per_page=6)
+    
+    return render_template('products/index.html', brand=brand, get_b=get_b,
+     brands=brands(), categories=categories())
 
 @app.route('/categories/<int:id>')
 def get_category(id):
-    get_cat_prod = Addproduct.query.filter_by(category_id=id)
-    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
-    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
-    return render_template('products/index.html', get_cat_prod=get_cat_prod, brands=brands, categories=categories)
+    page = request.args.get('page', 1, type=int)
+    get_cat = Category.query.filter_by(id=id).first_or_404()
+    get_cat_prod = Addproduct.query.filter_by(category=get_cat).paginate(page=page, per_page=6)
+    
+    return render_template('products/index.html', get_cat_prod=get_cat_prod, get_cat=get_cat,
+     brands=brands(), categories=categories())
+
+@app.route('/dist/<int:id>')
+def get_dist(id):
+    page = request.args.get('page', 1, type=int)
+    get_dist = Category.query.filter_by(id=id).first_or_404()
+    get_dist_prod = Addproduct.query.filter_by(category=get_dist).paginate(page=page, per_page=6)
+    
+    return render_template('products/index.html', get_dist_prod=get_dist_prod, get_dist=get_dist,
+     brands=brands(), categories=categories())
+
+     
 
 @app.route('/addbrand', methods=['GET', 'POST'])
 def addbrand():
@@ -42,7 +64,7 @@ def addbrand():
         flash("Please login first", "danger")
         return redirect(url_for('login'))
     if request.method == "POST":
-        getbrand = str(request.form.get('brand')).lower()
+        getbrand = str(request.form.get('brand'))
         brand = Brand(name=getbrand)
         db.session.add(brand)
         flash(f'The Brand "{getbrand}" was added to your database.', 'success')
@@ -50,6 +72,40 @@ def addbrand():
         return redirect(url_for('addbrand'))
 
     return render_template('products/addbrand.html', brands='brands')
+
+@app.route('/addcat', methods=['GET', 'POST'])
+def addcat():
+    if 'email' not in session:
+        flash("Please login first", "danger")
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        getbrand = str(request.form.get('category'))
+        cat = Category(name=getbrand)
+        db.session.add(cat)
+        flash(f'The Category "{getbrand}" was added to your database.', 'success')
+        db.session.commit()
+        return redirect(url_for('addcat'))
+
+    return render_template('products/addbrand.html', categories='categories')
+
+@app.route('/adddist', methods=['GET', 'POST'])
+def adddist():
+    if 'email' not in session:
+        flash("Please login first", "danger")
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        getname = str(request.form.get('dist'))
+        getcity = str(request.form.get('city'))
+        getphno = str(request.form.get('phno'))
+        cat = Dist(name=getname, city=getcity, phone_number=getphno)
+        db.session.add(cat)
+        flash(f'The Distributor "{getname}" was added to your database.', 'success')
+        db.session.commit()
+        return redirect(url_for('adddist'))
+
+    return render_template('products/addbrand.html')
 
 @app.route('/updatebrand/<int:id>', methods=['GET', 'POST'])
 def updatebrand(id):
@@ -67,38 +123,6 @@ def updatebrand(id):
     return render_template('products/updatebrand.html',
      title='Update Brand Page', updatebrand=updatebrand)
 
-@app.route('/deletebrand/<int:id>', methods=["POST"])
-def deletebrand(id):
-    if 'email' not in session:
-        flash("Please login first", "danger")
-        return redirect(url_for('login'))
-
-    brand = Brand.query.get_or_404(id)
-    if request.method=='POST':
-        db.session.delete(brand)
-        db.session.commit()
-        flash(f'The brand {brand.name} is deleted!', 'success')
-        return redirect(url_for('admin'))
-    flash(f'The brand {brand.name} cannot be deleted!', 'warning')
-    return redirect(url_for('admin'))
-
-
-@app.route('/addcat', methods=['GET', 'POST'])
-def addcat():
-    if 'email' not in session:
-        flash("Please login first", "danger")
-        return redirect(url_for('login'))
-
-    if request.method == "POST":
-        getbrand = str(request.form.get('category')).lower()
-        cat = Category(name=getbrand)
-        db.session.add(cat)
-        flash(f'The Category "{getbrand}" was added to your database.', 'success')
-        db.session.commit()
-        return redirect(url_for('addcat'))
-
-    return render_template('products/addbrand.html')
-
 @app.route('/updatecat/<int:id>', methods=['GET', 'POST'])
 def updatecat(id):
     if 'email' not in session:
@@ -115,6 +139,41 @@ def updatecat(id):
      title='Update Category Page',
      updatecat=updatecat)
 
+@app.route('/updatedist/<int:id>', methods=['GET', 'POST'])
+def updatedist(id):
+    if 'email' not in session:
+        flash("Please login first", "danger")
+
+    updatedist = Dist.query.get_or_404(id)
+    dist = request.form.get('dist')
+    city = request.form.get('city')
+    phno = request.form.get('phno')
+    if request.method=="POST":
+        updatedist.name = dist
+        updatedist.city = city
+        updatedist.phone_number = phno
+        flash(f'Your category has been updated', 'success')
+        db.session.commit()
+        return redirect(url_for('dist'))
+    return render_template('products/updatebrand.html',
+     title='Update Distributor Page',
+     updatedist=updatedist)
+
+@app.route('/deletebrand/<int:id>', methods=["POST"])
+def deletebrand(id):
+    if 'email' not in session:
+        flash("Please login first", "danger")
+        return redirect(url_for('login'))
+
+    brand = Brand.query.get_or_404(id)
+    if request.method=='POST':
+        db.session.delete(brand)
+        db.session.commit()
+        flash(f'The brand {brand.name} is deleted!', 'success')
+        return redirect(url_for('admin'))
+    flash(f'The brand {brand.name} cannot be deleted!', 'warning')
+    return redirect(url_for('admin'))
+
 @app.route('/deletecat/<int:id>', methods=["POST"])
 def deletecat(id):
     if 'email' not in session:
@@ -130,6 +189,21 @@ def deletecat(id):
     flash(f'The category {category.name} cannot be deleted!', 'warning')
     return redirect(url_for('admin'))
 
+@app.route('/deletedist/<int:id>', methods=["POST"])
+def deletedist(id):
+    if 'email' not in session:
+        flash("Please login first", "danger")
+        return redirect(url_for('login'))
+
+    dist = Dist.query.get_or_404(id)
+    if request.method=='POST':
+        db.session.delete(dist)
+        db.session.commit()
+        flash(f'The distributor {dist.name} is deleted!', 'success')
+        return redirect(url_for('admin'))
+    flash(f'The distributor {dist.name} cannot be deleted!', 'warning')
+    return redirect(url_for('admin'))
+
 
 
 @app.route('/addproduct', methods=["GET", "POST"])
@@ -140,6 +214,7 @@ def addproduct():
 
     brands = Brand.query.all()
     categories = Category.query.all()
+    dists = Dist.query.all()
     form = Addproducts(request.form)
     if request.method=="POST":
         name = form.name.data
@@ -148,25 +223,28 @@ def addproduct():
         stock = form.stock.data
         quality = form.quality.data
         desc = form.description.data
+
         brand = request.form.get('brand')
         category = request.form.get('category')
+        dist = request.form.get('dist')
+
         image_1 = photos.save(request.files.get('image_1'), name=secrets.token_hex(10)+'.')
         image_2 = photos.save(request.files.get('image_2'), name=secrets.token_hex(10)+'.')
         image_3 = photos.save(request.files.get('image_3'), name=secrets.token_hex(10)+'.')
         
         addpro = Addproduct(name=name, price=price, discount=discount,
          stock=stock, desc=desc, quality=quality,
-          brand_id=brand, category_id=category,
+          brand_id=brand, category_id=category, dist_id=dist,
           image_1=image_1, image_2=image_2, image_3=image_3)
         db.session.add(addpro)
-        flash(f'The product {name} has beeb added to your database', 'success')
+        flash(f'The product {name} has been added to your database', 'success')
         db.session.commit()
 
         return redirect(url_for('admin'))
 
     return render_template('products/addproduct.html',
      title="Add Product page", form=form,
-      brands=brands, categories=categories)
+      brands=brands, categories=categories, dists=dists)
 
 @app.route('/updateproduct/<int:id>', methods=['GET', 'POST'])
 def updateproduct(id):

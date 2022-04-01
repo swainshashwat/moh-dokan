@@ -7,7 +7,7 @@ from numpy import prod
 from shop import app, db, bcrypt
 from .forms import RegistrationForm, LoginForm
 from .models import User
-from shop.products.models import Addproduct, Brand, Category
+from shop.products.models import Addproduct, Brand, Category, Dist
 import os
 
 @app.route('/admin')
@@ -36,6 +36,15 @@ def category():
     categories = Category.query.order_by(Category.id.desc()).all()
     return render_template('admin/brand.html',
      title='Category page', categories=categories)
+
+@app.route('/dist')
+def dist():
+    if 'email' not in session:
+        flash(f'Please login first', 'danger')
+        return redirect(url_for('login'))
+    dists = Dist.query.order_by(Dist.id.desc()).all()
+    return render_template('admin/brand.html',
+     title='Distributor page', dists=dists)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

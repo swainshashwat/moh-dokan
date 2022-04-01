@@ -18,15 +18,8 @@
             <li class="nav-item">
               <a class="nav-link" href="/category">Categories</a>
             </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown link
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
+            <li class="nav-item">
+              <a class="nav-link" href="/dist">Distributors</a>
             </li>
           </ul>
         </div>
@@ -80,7 +73,7 @@
               </div>
               
               {% endfor %}
-            {% else %}
+            {% elif categories %}
               {% for category in categories %}
                 <tr>
                     <td>{{loop.index}}</td>
@@ -117,6 +110,44 @@
                 </div>
 
               {% endfor %}
+
+            {% else %}
+              {% for dist in dists %}
+              <tr>
+                  <td>{{loop.index}}</td>
+                  <td>{{dist.name}}</td>
+                  <td><a href="{{url_for('updatedist',id=dist.id)}}" class="btn btn-sm btn-outline-info">Edit</a></td>
+                  <td>
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{dist.id}}">
+                      Delete
+                    </button>
+                  </td>
+              </tr>
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal-{{dist.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">{{dist.name}}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <span class="text-danger">Do you want to delete distributor "{{dist.name}}"?</span>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                      <form action="{{url_for('deletedist', id=dist.id)}}" method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                      </form>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {% endfor %}
             {% endif %}
         </tbody>
     </table>
