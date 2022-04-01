@@ -5,12 +5,36 @@ from turtle import update
 from unicodedata import category
 from flask import redirect, render_template, url_for, flash, request, session, current_app
 from matplotlib.pyplot import title
+from numpy import product
 from pandas import CategoricalIndex
 from torch import prod
 from shop import db, app, photos
 from .models import Brand, Category, Addproduct
 from .forms import Addproducts
 import secrets, os
+
+@app.route('/')
+def home():
+    page = request.args.get('page', 1, type=int)
+    products = Addproduct.query.filter(Addproduct.stock>0).paginate(page=page, per_page=1)
+    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
+    return render_template('products/index.html',
+     products=products, brands=brands, categories=categories)
+
+@app.route('/brand/<int:id>')
+def get_brand(id):
+    brand = Addproduct.query.filter_by(brand_id=id)
+    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
+    return render_template('products/index.html', brand=brand, brands=brands, categories=categories)
+
+@app.route('/categories/<int:id>')
+def get_category(id):
+    get_cat_prod = Addproduct.query.filter_by(category_id=id)
+    brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
+    categories = Category.query.join(Addproduct, (Category.id==Addproduct.category_id)).all()
+    return render_template('products/index.html', get_cat_prod=get_cat_prod, brands=brands, categories=categories)
 
 @app.route('/addbrand', methods=['GET', 'POST'])
 def addbrand():
@@ -200,3 +224,23 @@ def updateproduct(id):
     return render_template('products/updateproduct.html',
      form=form, brands=brands,
       categories=categories, product=product)
+
+@app.route('/deleteproduct/<int:id>', methods=["POST"])
+def deleteproduct(id):
+    product = Addproduct.query.get_or_404(id)
+    if request.method=="POST":
+        try:
+            os.unlink(os.path.join(current_app.root_path, 'static/images/'+product.image_1))
+            os.unlink(os.path.join(current_app.root_path, 'static/images/'+product.image_2))
+            os.unlink(os.path.join(current_app.root_path, 'static/images/'+product.image_3))
+            
+        except Exception as e:
+            print(e)
+            
+        db.session.delete(product)
+        db.session.commit()
+        flash(f'The product {product.name} has been removed.', 'success')
+        return redirect(url_for('admin'))
+    
+    flash(f'Product cannot be removed.', 'danger')
+    return redirect(url_for('admin'))

@@ -1,0 +1,149 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- navbar starts-->
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="/">All products</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Link</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Brands
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for brand in brands %}
+                        <li><a class="dropdown-item" href="{{url_for('get_brand', id=brand.id)}}">{{brand.name}}</a></li>
+                    {% endfor %}
+                </ul>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Categories
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% for category in categories %}
+                        <li><a class="dropdown-item" href="{{url_for('get_category', id=category.id)}}">{{category.name}}</a></li>
+                    {% endfor %}
+                </ul>
+              </li>
+
+
+              <li class="nav-item">
+                <a class="nav-link disabled">Disabled</a>
+              </li>
+            </ul>
+            <form class="d-flex">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+</div>
+
+<!-- navbar ends-->
+<div class="container">
+    <div class="row">
+
+        {% if brand %}
+            {% for b in brand %}
+                <div class="col-md-3 mt-3">
+                    <div class="card">
+                        <img src="{{url_for('static', filename='images/'+b.image_1)}}" alt="{{b.name}}" class="card-img-top"
+                        height="200">
+                        <div class="card-body">
+                            {% if b.discount>0 %}
+                            <h6 style="color: #F00;" > Discount: {{b.discount}}%</h6>
+                            {% else %}
+                            <h6 style="color: #FFFFFF"> NO Discount</h6>
+                            {% endif %}
+                            <h5 class="text-center">{{b.name}}</h5>
+                            <p class='text-center'>Price ₹{{b.price}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="float-start btn btn-sm btn-primary">details</a>
+                            <a href="#" class="float-end btn btn-sm btn-warning">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+    </div>
+
+        {% elif get_cat_prod %}
+          {% for get_cat in get_cat_prod %}
+    <div class="row">
+              <div class="col-md-3 mt-3">
+                  <div class="card">
+                      <img src="{{url_for('static', filename='images/'+get_cat.image_1)}}" alt="{{get_cat.name}}" class="card-img-top"
+                      height="200">
+                      <div class="card-body">
+                          {% if get_cat.discount>0 %}
+                          <h6 style="color: #F00;" > Discount: {{get_cat.discount}}%</h6>
+                          {% else %}
+                          <h6 style="color: #FFFFFF"> NO Discount</h6>
+                          {% endif %}
+                          <h5 class="text-center">{{get_cat.name}}</h5>
+                          <p class='text-center'>Price ₹{{get_cat.price}}</p>
+                      </div>
+                      <div class="card-footer">
+                          <a href="#" class="float-start btn btn-sm btn-primary">details</a>
+                          <a href="#" class="float-end btn btn-sm btn-warning">Add to cart</a>
+                      </div>
+                  </div>
+              </div>
+          {% endfor %}
+    </div>
+    <div class="row">
+        {% else %}        
+            {% for product in products.items %}
+                <div class="col-md-3 mt-3">
+                    <div class="card">
+                        <img src="{{url_for('static', filename='images/'+product.image_1)}}" alt="{{product.name}}" class="card-img-top"
+                        height="200">
+                        <div class="card-body">
+                            {% if product.discount>0 %}
+                            <h6 style="color: #F00;" > Discount: {{product.discount}}%</h6>
+                            {% else %}
+                            <h6 style="color: #FFFFFF"> NO Discount</h6>
+                            {% endif %}
+                            <h5 class="text-center">{{product.name}}</h5>
+                            <p class='text-center'>Price ₹{{product.price}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="#" class="float-start btn btn-sm btn-primary">details</a>
+                            <a href="#" class="float-end btn btn-sm btn-warning">Add to cart</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        {% for page_num in products.iter_pages() %}
+          {% if page_num %}
+            {% if products.page == page_num %}
+              <a href="{{url_for('home', page=page_num)}}" class="btn btn-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+              <a href="{{url_for('home', page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+          {% else %}
+          ...
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+</div>
+{% endblock content %}
