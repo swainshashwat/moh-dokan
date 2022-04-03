@@ -1,6 +1,6 @@
 {% extends 'layout.html' %} {% block content %} {% include '_messages.html' %}
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
@@ -39,7 +39,7 @@
         {{ render_field(form.quality, class="form-control", placeholder="Add product quality")}}
         {{ render_field(form.description, class="form-control", placeholder="Add product details", rows="10")}}
 
-        <div class="container">
+        <div class="container-fluid">
           <div class="row">
             <div class="col-md-4">
               {{ render_field(form.image_1, class="form-control") }}
@@ -61,4 +61,5 @@
   </div>
 </div>
 
+{% include 'footer.html' %}
 {% endblock content %}

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
@@ -20,16 +20,28 @@
           <input type="submit" value="Add category" class="btn btn-info mt-2" />
         </form>
       {% else %}
-        <h1 class="text-center mt-5">Add a Distributor</h1>
+        <h1 class="text-center mt-5">Distributor Register</h1>
         <form action="" method="POST">
           <div class="mb-3">
-          Name: <input type="text" name="dist" class="form-control" />
+          Company name: <input type="text" name="dist" class="form-control" />
           </div>
           <div class="mb-3">
-          City: <input type="text" name="city" class="form-control" />
+            Full name of distributor: <input type="text" name="fname" class="form-control" />
           </div>
           <div class="mb-3">
-          Phone no.: <input type="text" name="phno" class="form-control" />
+            City: <input type="text" name="city" class="form-control" />
+          </div>
+          <div class="mb-3">
+            Phone no.: <input type="text" name="phno" class="form-control" />
+          </div>
+          <div class="mb-3">
+            Aadhar card no.: <input type="text" name="aadhar" class="form-control" />
+          </div>
+          <div class="mb-3">
+            Password: <input type="password" name="pass1" class="form-control" />
+          </div>
+          <div class="mb-3">
+            Confirm password: <input type="password" name="pass2" class="form-control" />
           </div>
           <input type="submit" value="Add Distributor" class="btn btn-info mt-2" />
         </form>
@@ -37,6 +49,7 @@
     </div>
     <div class="col-md-3"></div>
   </div>
+  {% include 'footer.html' %}
 </div>
 
 {% endblock content %}

@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- navbar starts-->
+{% include 'navbar.html' %}
+<!-- CONTENT-->
+
+</div>
+<div class="container-fluid mt-3">
+    <table class="table table-sm table-condensed table-striped table-hover">
+        <thead>
+            <th>Sr</th>
+            <th>Name</th>
+            <th>Add</th>
+            <th>View</th>
+            <th>Delete</th>
+        </thead>
+        <tbody>
+            {% if dists %}
+              {% for dist in only_dists %}
+              <tr>
+                  <td>{{loop.index}}</td>
+                  <td>{{dist.name}}</td>
+                  <td>
+                        <form action="{{url_for('quickaddproduct' ,id=dist.id)}}" method="post">
+                            <input type="hidden" id="get_dist_id" name="get_dist_id" value="{{get_dist_id}}">
+                            <button type="submit" class="btn btn-danger btn-sm">Add</button>
+                        </form>
+                  </td>
+                  <td><a href="{{url_for('single_page' ,id=dist.id)}}" class="btn btn-sm btn-outline-info">View</a></td>
+                  <td>
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{dist.id}}">
+                      Delete
+                    </button>
+                  </td>
+              </tr>
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal-{{dist.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">{{dist.name}}</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <span class="text-danger">Do you want to delete distributor "{{dist.name}}"?</span>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                      <form action="{{url_for('deleteproduct', id=dist.id)}}" method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                      </form>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock content %}

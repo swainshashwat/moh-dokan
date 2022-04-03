@@ -1,6 +1,6 @@
 {% extends "layout.html" %} {% block content %}
-
-<div class="container">
+{% include 'navbar.html' %}
+<div class="container-fluid">
     {% from "_formhelpers.html" import render_field %}
     <div class="row">
         <div class="col-md-4"></div>
@@ -9,10 +9,12 @@
             {% include '_messages.html' %}
             <form method="post" , enctype="multipart/form-data">
                 <div>
-                    {{ render_field(form.email, class="form-control") }} {{ render_field(form.password, class="form-control") }}
+                    {{ render_field(form.email, class="form-control") }}
+                    {{ render_field(form.password, class="form-control") }}
                 </div>
                 <p><input type=submit value="Login" , class="btn btn-info mt-2">
             </form>
+            <a href="{{url_for('register')}}" >New User?</a>
         </div>
         <div class="col-md-4"></div>
     </div>

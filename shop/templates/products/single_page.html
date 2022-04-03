@@ -3,39 +3,43 @@
 <!-- navbar starts-->
 {% include 'navbar.html' %}
 <!-- CONTENT-->
-<div class="container mt-5">
+<div class="container-fluid mt-5">
     <div class="row">
         <div class="col-md-6" id='b_image'>
             <img src="{{url_for('static', filename='images/'+product.image_1)}}" alt="product.name" width="400" height="400">
             
         </div>
         <div class="col-sm-6">
-            <h4> Product name: {{ product.name }}</h4>
+            <h1> {{ product.name }}</h4>
             <hr>
-            <p style="margin:0 ;"> <b>₹ {{ product.price }}</b></p>
+            <p style="margin:0;"> <b style="font-size: 2rem;">₹ {{ product.price }}</b></p>
             {% if product.discount > 0 %}
-            <p style="font-size:14px; color: green;margin:0 ;">Avail a discount of flat {{ product.discount }}% on this product</p>
+            <p style="font-size:1.2rem; color: #058b34;margin:0 ;">Avail a discount of flat {{ product.discount }}% on this product</p>
+            <p style="font-size:1.2rem; color: #058b34;margin:0 ;">ଏହି ଉତ୍ପାଦ ଉପରେ ଫ୍ଲାଟ {{ product.discount }}% ରିହାତି ଉପଲବ୍ଧ|</p>
             {% endif %}
-            <p style=""> Manufactured by: <b>{{ product.brand.name }}</b></p>
+            <p style="margin-top:10px ;"> Manufactured by(ଦ୍ୱାରା ଉତ୍ପାଦିତ) <b>{{ product.brand.name }}</b></p>
             <hr>
 
-            <p style="margin:0;"><b> Product description:</b></p>
-            <p style="font-size:13px;margin:0 ;">{{ product.desc }}</p>
+            <p style="margin:0; font-size:1.6rem;"><b> Product description(ଉତ୍ପାଦ ବର୍ଣ୍ଣନା):</b></p>
+            <p style="font-size:18px;margin:0 ;">{{ product.desc }}</p>
 
             <hr>
-            <p style="margin:0;"><b> Distributor details:</b></p>
-            <p style="font-size:13px;margin:0 ;"> Supplier: <b>{{ product.dist.name }}</b></p>
-            <p style="font-size:13px;margin:0 ;"> Location: <b>{{ product.dist.city }}</b></p>
-            <p style="font-size:13px;margin:0 ;"> Supplier contact number: <b>{{ product.dist.phone_number }}</b></p>
-
+            <p style="margin:0; font-size:1.6rem;"><b> Distributor details(ବିତରକ ବିବରଣୀ):</b></p>
+            <p style="font-size:18px;margin:0 ;"> Supplier(ଯୋଗାଣକାରୀ): <b>{{ product.dist.name|capitalize }}</b></p>
+            <p style="font-size:18px;margin:0 ;"> Location(ଅବସ୍ଥାନ): <b>{{ product.dist.city }}</b></p>
+            <p style="font-size:18px;margin-top:0 ;"> Contact number(ଯୋଗାଯୋଗ ନମ୍ବର): <b>{{ product.dist.phone_number }}</b></p>
+            
+            <a href="{{url_for('chatdist', id=product.dist.id)}}" class="btn btn-sm btn-outline-success" style="font-size:1.3rem" >Chat with distributor (ଚାଟ୍ କରନ୍ତୁ)</a>
+            
             <hr>
-            <p style="font-size:12px;"> This product falls under odisha's department of <b>{{ product.category.name }}</b> for quality control and authority.</p>
+            <p style="font-size:13px;"> This product falls under odisha's department of <b>{{ product.category.name }}</b> for quality control and authority.</p>
+            <p style="font-size:13px;"> ଗୁଣାତ୍ମକ ନିୟନ୍ତ୍ରଣ ଏବଂ ପ୍ରାଧିକରଣ ପାଇଁ ଏହି ଉତ୍ପାଦଟି <b>{{ product.category.name }}</b> ବିଭାଗର ରାଜ୍ୟ ଅଧୀନରେ ଅଛି|</p>
             <hr>
             
             <!--Add to cart buttons-->
             <form action="{{url_for('AddCart')}}" method="post">
                 <input type="hidden" name="product_id", value="{{product.id}}"/>
-                <button type="submit" class="btn btn-sm btn-warning">Add to Cart</button>
+                <button type="submit" class="btn btn-sm btn-warning" style="font-size:1.6rem; margin-right:2rem">Add to Cart</button>
                 <label for="">Quantity:</label>
                 <input type="number" name="quantity" id="" value="1" min="1" max=""{{product.stock}} style="width:50px;"/>
                 <label for="quality">Quality/Type:</label>
@@ -53,9 +57,9 @@
     <div class="row">
         <div class="col-md-12" id="s_image">
             <hr>
-            <img src="{{url_for('static', filename='images/'+product.image_1)}}" alt="product.name" height="120" width="120" class="p-3">
-            <img src="{{url_for('static', filename='images/'+product.image_2)}}" alt="product.name" height="120" width="120" class="p-3">
-            <img src="{{url_for('static', filename='images/'+product.image_3)}}" alt="product.name" height="120" width="120" class="p-3">
+            <img src="{{url_for('static', filename='images/'+product.image_1)}}" alt="product.name"  width="100" class="ml-5">
+            <img src="{{url_for('static', filename='images/'+product.image_2)}}" alt="product.name"  width="100" class="ml-5">
+            <img src="{{url_for('static', filename='images/'+product.image_3)}}" alt="product.name"  width="100" class="ml-5">
         </div>
     </div>
 </div>
@@ -72,5 +76,7 @@
         b_image.innerHTML = "<img src="+ImageSRC +" width='400' height='400'>"
     }
 </script>
+
+{% include 'footer.html' %}
 
 {% endblock content %}

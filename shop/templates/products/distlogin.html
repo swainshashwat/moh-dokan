@@ -1,0 +1,22 @@
+{% extends 'layout.html' %} 
+{% include 'navbar.html' %}
+
+{% block content %}
+
+<h1 class="text-center mt-5 d-flex justify-content-center">Distributor Login</h1>
+<form action="{{ url_for('distlogin')}}" method="POST" style="width: 500px; margin: auto;" class="mt-5">
+    <div class="mb-3">
+        <b>Verified Distributor:</b>
+        <select name="dist-name" id="dist-name" class="form-control">
+            {% for dist in dists %}
+                <option value="{{dist.id}}">{{dist.name}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <b>Password:</b><input type="password" name="pass1" class="form-control" />
+    </div>
+    <input type="submit" value="Login" class="btn btn-info mt-2" />
+</form>
+
+{% endblock content%}

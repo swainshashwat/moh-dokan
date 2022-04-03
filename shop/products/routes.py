@@ -3,6 +3,7 @@ from shop import db, app, photos
 from .models import Brand, Category, Dist, Addproduct
 from .forms import Addproducts
 import secrets, os
+from datetime import datetime
 
 def brands():
     brands = Brand.query.join(Addproduct, (Brand.id==Addproduct.brand_id)).all()
@@ -19,44 +20,42 @@ def dists():
 @app.route('/')
 def home():
     page = request.args.get('page', 1, type=int)
-    products = Addproduct.query.filter(Addproduct.stock>0).order_by(Addproduct.id.desc()).paginate(page=page, per_page=6)
+    products = Addproduct.query.filter(Addproduct.stock>0).order_by(Addproduct.id.desc()).paginate(page=page, per_page=4)
     return render_template('products/index.html',
-     products=products, brands=brands(), categories=categories())
+     products=products, brands=brands(), categories=categories(), dists=dists())
 
 @app.route('/product/<int:id>')
 def single_page(id):
     product = Addproduct.query.get_or_404(id)
     return render_template('products/single_page.html', product=product,
-     brands=brands(), categories=categories())
+     brands=brands(), categories=categories(), dists=dists())
 
 @app.route('/brand/<int:id>')
 def get_brand(id):
     page = request.args.get('page', 1, type=int)
     get_b = Brand.query.filter_by(id=id).first_or_404()
-    brand = Addproduct.query.filter_by(brand_id=id).paginate(page=page, per_page=6)
+    brand = Addproduct.query.filter_by(brand_id=id).paginate(page=page, per_page=4)
     
     return render_template('products/index.html', brand=brand, get_b=get_b,
-     brands=brands(), categories=categories())
+     brands=brands(), categories=categories(), dists=dists())
 
 @app.route('/categories/<int:id>')
 def get_category(id):
     page = request.args.get('page', 1, type=int)
     get_cat = Category.query.filter_by(id=id).first_or_404()
-    get_cat_prod = Addproduct.query.filter_by(category=get_cat).paginate(page=page, per_page=6)
+    get_cat_prod = Addproduct.query.filter_by(category=get_cat).paginate(page=page, per_page=4)
     
     return render_template('products/index.html', get_cat_prod=get_cat_prod, get_cat=get_cat,
-     brands=brands(), categories=categories())
+     brands=brands(), categories=categories(), dists=dists())
 
 @app.route('/dist/<int:id>')
 def get_dist(id):
     page = request.args.get('page', 1, type=int)
-    get_dist = Category.query.filter_by(id=id).first_or_404()
-    get_dist_prod = Addproduct.query.filter_by(category=get_dist).paginate(page=page, per_page=6)
+    get_dist = Dist.query.filter_by(id=id).first_or_404()
+    get_dist_prod = Addproduct.query.filter_by(dist=get_dist).paginate(page=page, per_page=6)
     
     return render_template('products/index.html', get_dist_prod=get_dist_prod, get_dist=get_dist,
-     brands=brands(), categories=categories())
-
-     
+     brands=brands(), categories=categories(), dists=dists())
 
 @app.route('/addbrand', methods=['GET', 'POST'])
 def addbrand():
@@ -97,13 +96,17 @@ def adddist():
 
     if request.method == "POST":
         getname = str(request.form.get('dist'))
+        getfname = str(request.form.get('fname'))
         getcity = str(request.form.get('city'))
         getphno = str(request.form.get('phno'))
-        cat = Dist(name=getname, city=getcity, phone_number=getphno)
-        db.session.add(cat)
-        flash(f'The Distributor "{getname}" was added to your database.', 'success')
+        getaadhar = str(request.form.get('aadhar'))
+
+        new_dist = Dist(name=getname, fname=getfname, city=getcity,
+         phone_number=getphno, aadhar_number=getaadhar)
+        db.session.add(new_dist)
+        flash(f'Hi {getfname}! Your store "{getname}" was added to the database.', 'success')
         db.session.commit()
-        return redirect(url_for('adddist'))
+        return redirect(url_for('distpage', id=new_dist.id))
 
     return render_template('products/addbrand.html')
 
@@ -146,12 +149,18 @@ def updatedist(id):
 
     updatedist = Dist.query.get_or_404(id)
     dist = request.form.get('dist')
+    fname = request.form.get('fname')
     city = request.form.get('city')
     phno = request.form.get('phno')
+    aadhar = request.form.get('aadhar')
+
+
     if request.method=="POST":
         updatedist.name = dist
+        updatedist.fname = fname
         updatedist.city = city
         updatedist.phone_number = phno
+        updatedist.aadhar = aadhar
         flash(f'Your category has been updated', 'success')
         db.session.commit()
         return redirect(url_for('dist'))
@@ -200,7 +209,7 @@ def deletedist(id):
         db.session.delete(dist)
         db.session.commit()
         flash(f'The distributor {dist.name} is deleted!', 'success')
-        return redirect(url_for('admin'))
+        return redirect(url_for('dist'))
     flash(f'The distributor {dist.name} cannot be deleted!', 'warning')
     return redirect(url_for('admin'))
 
@@ -208,9 +217,6 @@ def deletedist(id):
 
 @app.route('/addproduct', methods=["GET", "POST"])
 def addproduct():
-    if 'email' not in session:
-        flash(f'Please login first', 'danger')
-        return redirect(url_for('login'))
 
     brands = Brand.query.all()
     categories = Category.query.all()
@@ -322,3 +328,76 @@ def deleteproduct(id):
     
     flash(f'Product cannot be removed.', 'danger')
     return redirect(url_for('admin'))
+
+@app.route('/chatdist/<int:id>')
+def chatdist(id):
+    get_dist = Dist.query.filter_by(id=id).first_or_404()
+    return render_template('products/chatdist.html', get_dist=get_dist)
+
+@app.route('/distpage/<int:id>')
+def distpage(id):
+    
+    get_dist = Dist.query.filter_by(id=id).first_or_404()
+    get_dist_prod = Addproduct.query.filter_by(dist=get_dist).all()
+
+    print(get_dist_prod)
+    
+    return render_template('products/distpage.html',
+     get_dist=get_dist, get_dist_prod=get_dist_prod,
+      brands=brands(), categories=categories(), dists=dists())
+
+@app.route('/quickadd/<int:idz>')
+def quickadd(idz):
+    get_dist_prod = Addproduct.query.filter(Addproduct.dist_id!=idz).all()
+
+    return render_template('products/quickadd.html',
+     title="Quick add product page", only_dists=get_dist_prod, get_dist_id=idz,
+      brands=brands(), categories=categories(), dists=dists())
+
+@app.route('/quickaddproduct/<int:id>', methods=["GET", "POST"])
+def quickaddproduct(id):
+    product = Addproduct.query.get_or_404(id)
+
+    if request.method=="POST":
+
+        name = product.name
+        price = product.price
+        discount = product.discount
+        stock = product.stock
+        quality = product.quality
+
+        description = product.desc
+        brand_id = product.brand_id
+        category_id = product.category_id
+
+        dist_id_num = request.form.get('get_dist_id')
+        #dist = Dist.query.filter_by(id=dist_id_num).first_or_404()
+
+        image_1 = product.image_1
+        image_2 = product.image_2
+        image_3 = product.image_3
+        
+        addpro = Addproduct(name=name, price=price, discount=discount,
+         stock=stock, desc=description, quality=quality,
+          brand_id=brand_id, category_id=category_id, dist_id=dist_id_num,
+          image_1=image_1, image_2=image_2, image_3=image_3)
+
+        db.session.add(addpro)
+        flash(f'The product {name} has been added to your database', 'success')
+        db.session.commit()
+
+        get_dist = Dist.query.filter_by(id=id).first_or_404()
+        get_dist_prod = Addproduct.query.filter_by(dist_id=dist_id_num).all()
+
+        return render_template('products/distpage.html',
+            get_dist=get_dist, get_dist_prod=get_dist_prod,
+            brands=brands(), categories=categories(), dists=dists())
+
+@app.route('/distlogin', methods=["GET", "POST"])
+def distlogin():
+    if request.method=='POST':
+        id = request.form.get('dist-name')
+        return redirect(url_for('distpage',id=id))
+
+    return render_template('products/distlogin.html', dists=dists())
+

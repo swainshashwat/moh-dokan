@@ -1,0 +1,92 @@
+{% extends 'layout.html' %}
+{% block content %}
+<!-- navbar starts-->
+{% include 'navbar.html' %}
+<!-- CONTENT-->
+<div class="container-fluid mt-5">
+    <div class="row">
+        <div class="card" >
+                <center><img class="card-img-top" src="https://www.bootdey.com/img/default-avatar.png" alt="Card image cap" style="width: 18rem; height: 20rem;"></center>
+            <div class="card-body">
+              <h5 class="card-title">{{ get_dist.name }} <i class="fa fa-check-circle" style="font-size:24px; color:green;"></i></h5>
+              <p class="card-text">{{ get_dist.city }}</p>
+            </div>
+            <div class="d-flex justify-content-between">
+              <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                      <p style='margin-bottom: 0'><i class="fa fa-user"></i> Distributor: <b>{{ get_dist.fname }} </b></p>
+                      <p style='margin-bottom: 0'><i class="fa fa-address-card"></i> Aadhar Number: <b>{{ get_dist.aadhar_number }}</b></p>
+                      <p style='margin-bottom: 0'><i class="fa fa-phone" style="font-size:17px"></i> Phone Number:  <b>{{ get_dist.phone_number }}</b></p>
+                  </li>
+              </ul>
+            
+            <div>
+              <a href="{{ url_for('addproduct') }}" class="btn btn-outline-success btn-sm mb-3 d-flex justify-content-center align-items-center" data-dismiss="modal" >+ Add products</a>
+              <a href="{{ url_for('quickadd', idz=get_dist.id) }}" class="btn btn-outline-success btn-sm mb-3 d-flex justify-content-center align-items-center" data-dismiss="modal" >+ Quick add products</a>
+          </div>
+          </div>
+          </div>
+    </div>
+    <div class="row">
+        <div class="container-fluid mt-3">
+            <table class="table table-sm table-condensed table-striped table-hover">
+                <thead>
+                    <th>Sr</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Brand</th>
+                    <th>Image</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </thead>
+                <tbody>
+                    {% for product in get_dist_prod %}
+                      <tr>
+                          <td>{{loop.index}}</td>
+                          <td>{{product.name}}</td>
+                          <td>{{product.price}}</td>
+                          <td>{{product.discount}} %</td>
+                          <td>{{product.brand.name}}</td>
+                          <td><img src="{{url_for('static',filename='images/'+product.image_1)}}" width="50" height="40"></td>
+                          <td><a href="{{url_for('updateproduct', id=product.id)}}" class="btn btn-info btn-sm">Edit</a></td>
+                          <td>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#exampleModal-{{product.id}}">
+                              Delete
+                            </button>
+                          </td>
+                      </tr>
+        
+                      <!-- Modal -->
+                      <div class="modal fade" id="exampleModal-{{product.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <p class="text-danger"> Do you want to delete the product "{{product.name}}"?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-warning btn-sm" data-dismiss="modal">Cancel</button>
+                              <form action="{{url_for('deleteproduct', id=product.id)}}" method="post">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                              </form>
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% include 'footer.html' %}
+{% endblock content %}
