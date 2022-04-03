@@ -18,6 +18,8 @@
                             <h6 style="color: #FFFFFF"> NO Discount</h6>
                             {% endif %}
                             <h5 class="text-center">{{b.name}}</h5>
+                            <h6 class="text-center">Sold by <b>{{b.dist.name}}</b></h6>
+                            <h6 class="text-center">({{b.dist.city}})</h6>
                             <p class='text-center'>Price ₹{{b.price}}</p>
                         </div>
                         <div class="card-footer">
@@ -83,6 +85,8 @@
                           <h6 style="color: #FFFFFF"> NO Discount</h6>
                           {% endif %}
                           <h5 class="text-center">{{get_cat.name}}</h5>
+                          <h6 class="text-center">Sold by <b>{{get_cat.dist.name}}</b></h6>
+                          <h6 class="text-center">({{get_cat.dist.city}})</h6>
                           <p class='text-center'>Price ₹{{get_cat.price}}</p>
                       </div>
                       <div class="card-footer">
@@ -122,6 +126,8 @@
                         <h6 style="color: #FFFFFF"> NO Discount</h6>
                         {% endif %}
                         <h5 class="text-center">{{get_dist.name}}</h5>
+                        <h6 class="text-center">Sold by <b>{{get_dist.dist.name}}</b></h6>
+                        <h6 class="text-center">({{get_dist.dist.city}})</h6>
                         <p class='text-center'>Price ₹{{get_dist.price}}</p>
                     </div>
                     <div class="card-footer">
@@ -184,8 +190,10 @@
                             {% else %}
                             <h6 style="color: #FFFFFF"> NO Discount</h6>
                             {% endif %}
-                            <h5 class="text-center" style="font-size:2rem">{{product.name}}</h5>
-                            <p class='text-center' style="font-size:1.6rem">Price ₹{{product.price}}</p>
+                            <h5 class="text-center">{{product.name}}</h5>
+                            <h6 class="text-center">Sold by <b>{{product.dist.name}}</b></h6>
+                            <h6 class="text-center">({{product.dist.city}})</h6>
+                            <p class='text-center'>Price ₹{{product.price}}</p>
                         </div>
                         <div class="card-footer">
                             <a href="{{url_for('single_page', id=product.id)}}" class="float-start btn btn-sm btn-primary" style="font-size:1.2rem"> Details</a>

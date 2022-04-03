@@ -401,3 +401,6 @@ def distlogin():
 
     return render_template('products/distlogin.html', dists=dists())
 
+@app.route('/mapview')
+def mapview():
+    return render_template('products/mapview.html')

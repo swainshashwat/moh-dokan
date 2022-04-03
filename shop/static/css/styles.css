@@ -33,9 +33,9 @@ body {
 }
 
 .main .card {
-    max-width: 450px;
+    max-width: 18vw;
     height: 600px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0px 0px 5px #ccc;
 }
 
@@ -93,4 +93,8 @@ input {
     background-image: url('../images/sample_advert.jpeg');
     margin-top: 10%;
     margin-bottom: 0%;
+}
+
+.map {
+    overflow: hidden;
 }

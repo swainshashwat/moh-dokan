@@ -11,7 +11,7 @@
           alt="govt logo"
           style="margin-right:10px"
         />
-        Mo Dokan(ମୋ ଦୋକାନ)
+        Moh Dokan(ମୋ ଦୋକାନ)
       </a>
       <button
         class="navbar-toggler"
@@ -130,7 +130,7 @@
       <button
         type="button"
         onclick="window.location.href='{{ url_for('home') }}';"
-        class="btn btn-outline-success"
+        class="btn btn-outline-info"
         data-bs-toggle="dropdown"
         aria-expanded="false">
         All Products
@@ -141,8 +141,7 @@
         type="button"
         class="btn btn-outline-dark dropdown-toggle"
         data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
+        aria-expanded="false">
         Brands
       </button>
       <ul class="dropdown-menu">
@@ -181,19 +180,27 @@
         type="button"
         class="btn btn-outline-dark dropdown-toggle"
         data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
+        aria-expanded="false">
         City
       </button>
       <ul class="dropdown-menu">
         {% for dist in dists %}
         <li>
           <a class="dropdown-item" href="{{url_for('get_dist', id=dist.id)}}"
-            >{{dist.name}}</a
-          >
+            >{{dist.city}}</a>
         </li>
         {% endfor %}
       </ul>
+    </div>
+    <div class="btn-group">
+      <button
+        type="button"
+        onclick="window.location.href='{{ url_for('mapview') }}';"
+        class="btn btn-outline-success"
+        data-bs-toggle="dropdown"
+        aria-expanded="false">
+        Map-View
+      </button>
     </div>
   </div>
   {% endif %}
