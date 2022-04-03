@@ -392,6 +392,8 @@ def quickaddproduct(id):
         return render_template('products/distpage.html',
             get_dist=get_dist, get_dist_prod=get_dist_prod,
             brands=brands(), categories=categories(), dists=dists())
+    return redirect(url_for('admin'))
+
 
 @app.route('/distlogin', methods=["GET", "POST"])
 def distlogin():

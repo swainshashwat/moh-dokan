@@ -48,7 +48,7 @@
     </div>
 
     <div class="row">
-      <div class="col text-center">
+      <div class="col text-center d-flex">
         {% if brand.has_prev %}
         <a href="{{url_for('get_brand', id=get_b.id, page=brand.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Prev</a>
         {% endif %}
@@ -154,7 +154,7 @@
     </div>
 
     <div class="row">
-      <div class="col text-center">
+      <div class="col text-center d-flex">
         {% if get_dist_prod.has_prev %}
         <a href="{{url_for('get_category', id=get_cat.id, page=get_dist_prod.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Prev</a>
         {% endif %}
@@ -219,8 +219,8 @@
     </div>
     
 
-    <div class="row" style=" position:absolute; left:95%; top:92%;">
-      <div class="col text-center">
+    <div class="row" style="">
+      <div class="col text-center d-flex">
         {% if products.has_prev %}
         <a href="{{url_for('home', page=products.prev_num)}}" class="btn btn-outline-warning btn-sm mt-3">Prev</a>
         {% endif %}
@@ -228,9 +228,9 @@
         {% for page_num in products.iter_pages(left_edge=1, right_edge=2, left_current=1, right_current=2) %}
           {% if page_num %}
             {% if products.page == page_num %}
-              <a href="{{url_for('home', page=page_num)}}" class="btn btn-warning btn-sm " style="font-size:1.2rem">{{page_num}}</a>
+              <a href="{{url_for('home', page=page_num)}}" class="btn btn-info btn-sm " style="font-size:1.2rem; margin:4px;">{{page_num}}</a>
             {% else %}
-              <a href="{{url_for('home', page=page_num)}}" class="btn btn-outline-warning btn-sm mt-3">{{page_num}}</a>
+              <a href="{{url_for('home', page=page_num)}}" class="btn btn-outline-info btn-sm mt-3" style="margin:4px;">{{page_num}}</a>
             {% endif %}
           {% else %}
           ...
